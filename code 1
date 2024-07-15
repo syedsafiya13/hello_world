@@ -344,3 +344,34 @@ def plot_parking_slots(latest_status):
     plt.show()
 
 plot_parking_slots(latest_status)
+
+#pattern printing
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Function to plot peak times
+def plot_peak_times(df, column, title):
+    # Convert the time column to datetime
+    df[column] = pd.to_datetime(df[column], format='%H:%M:%S').dt.time
+
+    # Count the occurrences of each hour
+    df['Hour'] = pd.to_datetime(df[column], format='%H:%M:%S').dt.hour
+    peak_times = df['Hour'].value_counts().sort_index()
+
+    # Plotting
+    plt.figure(figsize=(10, 6))
+    plt.plot(peak_times.index, peak_times.values, marker='o')
+    plt.xlabel('Hour of the Day')
+    plt.ylabel('Number of Vehicles')
+    plt.title(title)
+    plt.grid(True)
+    plt.xticks(range(24))
+    plt.show()
+
+# Read the Excel file
+excel_path = 'detection_log.xlsx'
+df = pd.read_excel(excel_path)
+
+# Plot peak times for entry and exit
+plot_peak_times(df, 'Entry Time', 'Peak Entry Times')
+plot_peak_times(df, 'Exit Time', 'Peak Exit Times')
